@@ -1,0 +1,50 @@
+import chess
+import chess.engine
+
+# יש להכניס את הנתיב למנוע MEGABOT1 כאן
+MEGABOT1_PATH = "MEGABOT1/MEGABOT1.exe"
+
+bot_move = get_best_move(board, time_limit=1.0)
+""" מחזיר את המסע הטוב ביותר לפי MEGABOT1 """
+    with chess.engine.SimpleEngine.popen_uci(engine_path) as engine:
+       
+        result = engine.play(board, chess.engine.Limit(depth=20))
+return result.move
+
+def main():
+    board = chess.Board()
+    
+    print("ברוך הבא לבוט שחמט! אתה בלבן.")
+    print(board)
+
+    while not board.is_game_over():
+        # תור המשתמש
+        user_move = input("הזן את המהלך שלך (בפורמט UCI, למשל e2e4): ")
+        
+        try:
+            move = chess.Move.from_uci(user_move)
+            if move in board.legal_moves:
+                board.push(move)
+            else:
+                print("מהלך לא חוקי! נסה שוב.")
+                continue
+        except ValueError:
+            print("פורמט שגוי! נסה שוב.")
+            continue
+        
+        if board.is_game_over():
+            break
+
+        # תור הבוט
+        print("\nתור הבוט...")
+        bot_move = get_best_move(board)
+        board.push(bot_move)
+        print(f"הבוט שיחק: {bot_move}")
+
+        print("\nלוח השחמט:")
+        print(board)
+
+    print("\nהמשחק נגמר! התוצאה:", board.result())
+
+if __name__ == "__main__":
+    main()
